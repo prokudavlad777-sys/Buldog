@@ -21,6 +21,12 @@
     <Using Remove="System.Drawing" />
   </ItemGroup>
 
+  <!-- App.xaml лежить у src/, а SDK сам робить точкою входу лише App.xaml у корені проєкту -->
+  <ItemGroup>
+    <Page Remove="src\App.xaml" />
+    <ApplicationDefinition Include="src\App.xaml" />
+  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="assets\icon.png" />
   </ItemGroup>
