@@ -1,0 +1,141 @@
+<Window x:Class="BuldogBoost.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:native="clr-namespace:BuldogBoost.UI.Native"
+        Title="Buldog Boost" Height="780" Width="920" MinHeight="640" MinWidth="740"
+        Icon="/assets/icon.png"
+        Background="#14161A" Foreground="#E8E8E8" FontSize="14">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#1C1F26"/>
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="CaretBrush" Value="#E8E8E8"/>
+            <Setter Property="BorderBrush" Value="#2E333D"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Margin" Value="0,2,0,8"/>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="#111111"/>
+            <Setter Property="Padding" Value="14,6"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="110"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="🐶 Buldog Boost" FontSize="26" FontWeight="Bold" Margin="0,0,0,8"/>
+
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+
+            <!-- ============ ГОЛОВНА ============ -->
+            <TabItem Header="Головна">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="170"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#1C1F26">
+                        <native:D2DHost x:Name="Graph"/>
+                    </Border>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,10">
+                        <TextBlock x:Name="CpuText" Text="CPU: —" Margin="0,0,24,0"/>
+                        <TextBlock x:Name="RamText" Text="RAM: —"/>
+                    </StackPanel>
+
+                    <WrapPanel Grid.Row="2" Margin="0,0,0,10">
+                        <Button Content="Очистити temp" Click="BtnClean_Click"/>
+                        <Button Content="Висока продуктивність" Click="BtnPower_Click"/>
+                        <Button Content="Відкат" ToolTip="Повернути схему живлення й пріоритети програм" Click="BtnRestorePower_Click"/>
+                        <Button Content="Оновити список" Click="BtnRefresh_Click"/>
+                        <Button Content="Закрити вибрані" Click="BtnKill_Click"/>
+                    </WrapPanel>
+
+                    <ListBox Grid.Row="3" x:Name="ProcList" Background="#1C1F26" Foreground="#E8E8E8" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Selected, Mode=TwoWay}" Content="{Binding Label}" Margin="2"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Grid Grid.Row="4" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="BoostBtn" Grid.Column="0" Content="⚡ BOOST" FontSize="18" FontWeight="Bold"
+                                Padding="14,12" Click="BtnBoost_Click"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Рівень" Foreground="#B8C0CC" Margin="0,0,0,2"/>
+                            <ComboBox x:Name="BoostLevelBox" MinWidth="150" Padding="8,6"
+                                      SelectionChanged="BoostLevelBox_SelectionChanged"
+                                      ToolTip="Звичайний — temp + живлення. Сильний — + глибоке очищення, DNS, приглушення фону. Максимум — + кеш браузерів, RAM, закриття відмічених.">
+                                <ComboBoxItem Content="Звичайний"/>
+                                <ComboBoxItem Content="Сильний"/>
+                                <ComboBoxItem Content="Максимум"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ ІГРИ ============ -->
+            <TabItem Header="Ігри">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" TextWrapping="Wrap" Foreground="#B8C0CC" Margin="0,0,0,8"
+                               Text="Коли гра запускається — закриємо вказані програми, піднімемо пріоритет гри, приглушимо фонові програми й увімкнемо «Висока продуктивність». Після виходу з гри все буде повернуто."/>
+
+                    <ListBox Grid.Row="1" x:Name="ProfilesList" Background="#1C1F26" Foreground="#E8E8E8" BorderThickness="0" Margin="0,0,0,10"/>
+
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="Назва профілю"/>
+                        <TextBox x:Name="ProfileNameBox"/>
+                        <TextBlock Text="Файл гри (наприклад, cs2.exe)"/>
+                        <TextBox x:Name="ProfileExeBox"/>
+                        <TextBlock Text="Закрити при старті гри (через кому, наприклад: chrome.exe, discord.exe)"/>
+                        <TextBox x:Name="ProfileCloseBox"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <Button Content="Додати профіль" Click="BtnAddProfile_Click"/>
+                        <Button Content="Видалити вибраний" Click="BtnRemoveProfile_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ НАЛАШТУВАННЯ ============ -->
+            <TabItem Header="Налаштування">
+                <StackPanel Margin="0,14,0,0">
+                    <CheckBox x:Name="AutoStartBox" Content="Запускати разом із Windows (згорнутим у трей)"
+                              Margin="0,0,0,10" Click="AutoStartBox_Click"/>
+                    <CheckBox x:Name="TrayBox" Content="Закривати вікно у трей (замість виходу)"
+                              Click="TrayBox_Click"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <TextBox Grid.Row="2" x:Name="LogBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                 Background="#0F1114" Foreground="#B8C0CC" BorderThickness="0" TextWrapping="Wrap" Margin="0,10,0,0"/>
+    </Grid>
+</Window>

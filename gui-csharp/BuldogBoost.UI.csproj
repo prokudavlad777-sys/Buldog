@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms> <!-- лише для NotifyIcon (трей) -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BuldogBoost.UI</RootNamespace>
+    <AssemblyName>BuldogBoost</AssemblyName>
+    <Version>0.2.0</Version>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- WinForms + WPF мають однойменні типи — прибираємо зайві неявні using -->
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\icon.png" />
+  </ItemGroup>
+
+  <!-- Нативні DLL (bb_engine, bb_render, bb_safe) збирає scripts/build.ps1 у ../dist/native -->
+  <ItemGroup>
+    <None Include="..\dist\native\*.dll" Condition="Exists('..\dist\native')"
+          CopyToOutputDirectory="PreserveNewest" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

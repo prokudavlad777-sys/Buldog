@@ -1,0 +1,11 @@
+add_library(bb_engine SHARED src/engine.cpp src/platform.cpp)
+target_include_directories(bb_engine PUBLIC include)
+target_compile_definitions(bb_engine PRIVATE BB_ENGINE_EXPORTS BB_VERSION="${PROJECT_VERSION}")
+set_target_properties(bb_engine PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+if(WIN32)
+    target_link_libraries(bb_engine PRIVATE psapi powrprof ole32)
+endif()
+
+add_executable(bb_engine_tests tests/engine_tests.cpp)
+target_link_libraries(bb_engine_tests PRIVATE bb_engine)
+add_test(NAME engine COMMAND bb_engine_tests)

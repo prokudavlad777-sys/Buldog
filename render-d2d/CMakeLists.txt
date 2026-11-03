@@ -1,0 +1,4 @@
+add_library(bb_render SHARED src/renderer.cpp)
+target_include_directories(bb_render PUBLIC include)
+target_compile_definitions(bb_render PRIVATE BB_RENDER_EXPORTS WIN32_LEAN_AND_MEAN NOMINMAX)
+target_link_libraries(bb_render PRIVATE d2d1)
