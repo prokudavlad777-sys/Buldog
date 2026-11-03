@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  # Швидка перевірка на Linux: тести C++ рушія та Rust-логіки
+  tests-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: C++ engine tests
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Rust tests
+        run: cargo test --manifest-path safe-rust/Cargo.toml
+
+  # Повна збірка Windows: DLL + exe
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+      - name: Build all
+        shell: pwsh
+        run: ./scripts/build.ps1
+      - name: Package
+        shell: pwsh
+        run: Compress-Archive -Path dist/app/* -DestinationPath BuldogBoost-win-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BuldogBoost-win-x64
+          path: |
+            BuldogBoost-win-x64.zip
+            dist/BuldogBoost-Setup-*.exe
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [tests-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: BuldogBoost-win-x64
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            BuldogBoost-win-x64.zip
+            BuldogBoost-Setup-*.exe
